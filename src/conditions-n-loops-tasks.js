@@ -467,9 +467,8 @@ function rotateMatrix(matrix) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
-  /* const sortArr = arr;
+function sortByAsc(arr) {
+  const sortArr = arr;
   for (let i = 0; i < sortArr.length; i += 1) {
     for (let j = sortArr.length - 1; j > 0; j -= 1) {
       if (sortArr[j] < sortArr[j - 1]) {
@@ -479,7 +478,7 @@ function sortByAsc(/* arr */) {
       }
     }
   }
-  return sortArr; */
+  return sortArr;
 }
 
 /**
@@ -500,23 +499,32 @@ function sortByAsc(/* arr */) {
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
 function shuffleChar(str, iterations) {
-  let strcopy = str;
+  let strCopy = str;
   let count = 0;
   while (count < iterations) {
     let odd = '';
     let even = '';
     for (let i = 0; i < str.length; i += 1) {
       if (i % 2 === 0) {
-        odd += strcopy[i];
+        odd += strCopy[i];
       } else {
-        even += strcopy[i];
+        even += strCopy[i];
       }
     }
-    strcopy = odd + even;
+    strCopy = odd + even;
     count += 1;
+
+    if (str === strCopy) {
+      const discr = Math.floor(iterations / count);
+      count *= discr;
+    }
   }
-  return strcopy;
+  return strCopy;
 }
+
+// Перемешать массив нужное количество раз (получить четные и нечетные элементы и объединить)
+// чтобы сократить время выполнения, если при перемешивании массив приходит в итоге к исходному,
+// то с увеличить count в нужное количество раз (чтобы не крутить по кругу)
 
 /**
  * Returns the nearest largest integer consisting of the digits of the given positive integer.
@@ -535,9 +543,38 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const arr = Array.from(`${number}`);
+  let index = 0;
+  let cut;
+
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    if (arr[i] < arr[i + 1]) {
+      index = i;
+      break;
+    }
+  }
+
+  if (index !== 0) {
+    cut = arr.splice(index + 1);
+  }
+  cut = cut.sort();
+
+  for (let i = 0; i < cut.length; i += 1) {
+    if (arr[arr.length - 1] < cut[i]) {
+      const temp = cut[i];
+      cut[i] = arr[arr.length - 1];
+      arr[arr.length - 1] = temp;
+      break;
+    }
+  }
+  arr.push(cut);
+  const res = arr.flat();
+  return Number(res.join(''));
 }
+// Получить из числа массив. Проход по массиву, как только левая цифра < своего правого соседа
+// получить индекс. Разбить массив по индексу на две части. Для правой сорт. Последнюю левую
+// цифру меняем на правую, которая больше левой. Правый массив сорт. Объединить массивы, преобразовать в число.
 
 module.exports = {
   isPositive,
